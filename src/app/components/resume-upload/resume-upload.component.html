@@ -1,0 +1,30 @@
+<div class="upload-container">
+
+  <h2>Upload Your Resume</h2>
+
+  <div class="file-input-row">
+    <label class="file-label">
+      <input type="file" accept=".pdf" (change)="onFileSelected($event)">
+      <span>{{ selectedFile ? selectedFile.name : 'Choose PDF file...' }}</span>
+    </label>
+  </div>
+
+  <h3>Paste Job Description</h3>
+  <textarea rows="7" [(ngModel)]="jobDescription" placeholder="Paste the job description here..."></textarea>
+
+  <button class="analyze-btn" (click)="analyzeResume()" [disabled]="isAnalyzing">
+    {{ isAnalyzing ? 'Analyzing...' : 'Analyze Resume' }}
+  </button>
+
+  <div class="loader" *ngIf="isAnalyzing">
+    <div class="spinner"></div>
+    <p>AI is analyzing your resume against the job description...</p>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <app-analysis-result [result]="analysisResult"></app-analysis-result>
+
+</div>

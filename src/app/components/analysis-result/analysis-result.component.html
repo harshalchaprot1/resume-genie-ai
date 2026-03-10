@@ -1,0 +1,39 @@
+<div class="analysis-container" *ngIf="result">
+
+  <div class="score-section">
+    <h2>Resume Match Score</h2>
+    <div class="score-circle" [ngClass]="scoreClass">
+      <span class="score-number">{{ result.matchScore }}</span>
+      <span class="score-label">/ 100</span>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📋 Summary</h3>
+    <p>{{ result.summary }}</p>
+  </div>
+
+  <div class="grid-section">
+    <div class="card strengths">
+      <h3>✅ Strengths</h3>
+      <ul>
+        <li *ngFor="let item of result.strengths">{{ item }}</li>
+      </ul>
+    </div>
+
+    <div class="card gaps">
+      <h3>⚠️ Gaps</h3>
+      <ul>
+        <li *ngFor="let item of result.gaps">{{ item }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card suggestions">
+    <h3>💡 Suggestions</h3>
+    <ul>
+      <li *ngFor="let item of result.suggestions">{{ item }}</li>
+    </ul>
+  </div>
+
+</div>
