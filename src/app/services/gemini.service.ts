@@ -10,36 +10,37 @@ import { environment } from '../../environments/environment';
 export class GeminiService {
 
   private readonly API_URL =
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${environment.geminiApiKey}`;
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${environment.geminiApiKey}`;
 
   constructor(private http: HttpClient) {}
 
   analyzeResume(resumeText: string, jobDescription: string): Observable<AnalysisResult> {
-    const prompt = `You are an expert resume reviewer. Analyze the following resume against the job description.
+    const prompt = `Analyze resume vs job description. Return JSON only:
 
-Resume:
-${resumeText}
+Resume: ${resumeText.substring(0, 2000)}
 
-Job Description:
-${jobDescription}
+Job: ${jobDescription.substring(0, 800)}
 
-Respond ONLY with a valid JSON object in this exact format (no markdown code blocks, no extra text):
+Format:
 {
-  "matchScore": <integer 0-100>,
-  "summary": "<2-3 sentence overall assessment>",
-  "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
-  "gaps": ["<gap 1>", "<gap 2>"],
-  "suggestions": ["<suggestion 1>", "<suggestion 2>", "<suggestion 3>"]
-}`;
+  "matchScore": <0-100>,
+  "summary": "<brief 1-2 line assessment>",
+  "strengths": ["<strength>","<strength>"],
+  "gaps": ["<gap>","<gap>"],
+  "suggestions": ["<brief tip>","<brief tip>"]
+}
+
+Keep all responses concise.`;
 
     const body = {
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { responseMimeType: 'application/json' }
+      contents: [{ parts: [{ text: prompt }] }]
     };
 
     return this.http.post<any>(this.API_URL, body).pipe(
       map(response => {
-        const text = response.candidates[0].content.parts[0].text;
+        let text = response.candidates[0].content.parts[0].text;
+        // Remove markdown code blocks if present
+        text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
         return JSON.parse(text) as AnalysisResult;
       })
     );

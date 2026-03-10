@@ -1,39 +1,71 @@
-<div class="analysis-container" *ngIf="result">
+<div *ngIf="result" class="results-wrapper">
 
-  <div class="score-section">
-    <h2>Resume Match Score</h2>
-    <div class="score-circle" [ngClass]="scoreClass">
-      <span class="score-number">{{ result.matchScore }}</span>
-      <span class="score-label">/ 100</span>
+  <mat-divider class="results-divider"></mat-divider>
+
+  <h2 class="results-heading">
+    <mat-icon>assessment</mat-icon>
+    Analysis Results
+  </h2>
+
+  <!-- Score + Summary -->
+  <mat-card class="score-card" appearance="outlined">
+    <mat-card-content>
+      <div class="score-layout">
+        <div class="score-ring" [ngClass]="scoreClass">
+          <span class="score-value">{{ result.matchScore }}</span>
+          <span class="score-of">/100</span>
+        </div>
+        <div class="score-detail">
+          <span class="score-badge" [ngClass]="scoreClass + '-bg'">{{ scoreLabel }}</span>
+          <p class="score-summary">{{ result.summary }}</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Strengths & Gaps side by side -->
+  <div class="two-col">
+
+    <mat-card appearance="outlined" class="section-card">
+      <div class="section-head strengths-head">
+        <mat-icon>verified</mat-icon>
+        <span>Strengths</span>
+      </div>
+      <mat-card-content>
+        <div class="item-row" *ngFor="let s of result.strengths">
+          <mat-icon class="item-icon strengths-c">check_circle</mat-icon>
+          <span>{{ s }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="section-card">
+      <div class="section-head gaps-head">
+        <mat-icon>report_problem</mat-icon>
+        <span>Gaps</span>
+      </div>
+      <mat-card-content>
+        <div class="item-row" *ngFor="let g of result.gaps">
+          <mat-icon class="item-icon gaps-c">warning_amber</mat-icon>
+          <span>{{ g }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+
+  <!-- Suggestions -->
+  <mat-card appearance="outlined" class="section-card">
+    <div class="section-head suggestions-head">
+      <mat-icon>tips_and_updates</mat-icon>
+      <span>Suggestions for Improvement</span>
     </div>
-  </div>
-
-  <div class="summary-section">
-    <h3>📋 Summary</h3>
-    <p>{{ result.summary }}</p>
-  </div>
-
-  <div class="grid-section">
-    <div class="card strengths">
-      <h3>✅ Strengths</h3>
-      <ul>
-        <li *ngFor="let item of result.strengths">{{ item }}</li>
-      </ul>
-    </div>
-
-    <div class="card gaps">
-      <h3>⚠️ Gaps</h3>
-      <ul>
-        <li *ngFor="let item of result.gaps">{{ item }}</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="card suggestions">
-    <h3>💡 Suggestions</h3>
-    <ul>
-      <li *ngFor="let item of result.suggestions">{{ item }}</li>
-    </ul>
-  </div>
+    <mat-card-content>
+      <div class="item-row" *ngFor="let tip of result.suggestions; let i = index">
+        <span class="tip-num">{{ i + 1 }}</span>
+        <span>{{ tip }}</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
 </div>

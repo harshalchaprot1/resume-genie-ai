@@ -1,30 +1,80 @@
-<div class="upload-container">
+<div class="input-grid">
 
-  <h2>Upload Your Resume</h2>
+  <!-- Left: Upload Resume -->
+  <div class="input-panel">
+    <div class="panel-title">
+      <mat-icon>upload_file</mat-icon>
+      <span>Upload Resume</span>
+    </div>
+    <div
+      class="drop-zone"
+      [class.drag-over]="isDragOver"
+      [class.has-file]="selectedFile"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()">
 
-  <div class="file-input-row">
-    <label class="file-label">
-      <input type="file" accept=".pdf" (change)="onFileSelected($event)">
-      <span>{{ selectedFile ? selectedFile.name : 'Choose PDF file...' }}</span>
-    </label>
+      <input #fileInput type="file" accept=".pdf" hidden (change)="onFileSelected($event)">
+
+      <ng-container *ngIf="!selectedFile">
+        <mat-icon class="drop-icon">cloud_upload</mat-icon>
+        <span class="drop-label">Drop PDF here or <u>browse</u></span>
+      </ng-container>
+
+      <div *ngIf="selectedFile" class="file-row">
+        <mat-icon class="pdf-icon">picture_as_pdf</mat-icon>
+        <span class="file-name">{{ selectedFile.name }}</span>
+        <span class="file-size">{{ (selectedFile.size / 1024).toFixed(0) }} KB</span>
+        <button mat-icon-button class="remove-btn" (click)="removeFile(); $event.stopPropagation()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
   </div>
 
-  <h3>Paste Job Description</h3>
-  <textarea rows="7" [(ngModel)]="jobDescription" placeholder="Paste the job description here..."></textarea>
-
-  <button class="analyze-btn" (click)="analyzeResume()" [disabled]="isAnalyzing">
-    {{ isAnalyzing ? 'Analyzing...' : 'Analyze Resume' }}
-  </button>
-
-  <div class="loader" *ngIf="isAnalyzing">
-    <div class="spinner"></div>
-    <p>AI is analyzing your resume against the job description...</p>
+  <!-- Right: Job Description -->
+  <div class="input-panel">
+    <div class="panel-title">
+      <mat-icon>work_outline</mat-icon>
+      <span>Job Description</span>
+    </div>
+    <mat-form-field appearance="outline" class="jd-field">
+      <textarea
+        matInput
+        [(ngModel)]="jobDescription"
+        placeholder="Paste the job description here..."
+        rows="4"></textarea>
+      <mat-hint align="end" *ngIf="jobDescription">{{ jobDescription.length }} chars</mat-hint>
+    </mat-form-field>
   </div>
-
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
-  </div>
-
-  <app-analysis-result [result]="analysisResult"></app-analysis-result>
 
 </div>
+
+<!-- Analyze -->
+<div class="action-row">
+  <button
+    mat-raised-button
+    color="primary"
+    class="analyze-btn"
+    (click)="analyzeResume()"
+    [disabled]="isAnalyzing || !selectedFile || !jobDescription.trim()">
+    <mat-icon>auto_awesome</mat-icon>
+    {{ isAnalyzing ? 'Analyzing...' : 'Analyze Resume' }}
+  </button>
+</div>
+
+<!-- Loading -->
+<div class="loading-bar" *ngIf="isAnalyzing">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <span class="loading-label"><mat-icon class="spin">sync</mat-icon> Analyzing...</span>
+</div>
+
+<!-- Error -->
+<div class="error-bar" *ngIf="errorMessage">
+  <mat-icon>error_outline</mat-icon>
+  <span>{{ errorMessage }}</span>
+</div>
+
+<!-- Results -->
+<app-analysis-result [result]="analysisResult"></app-analysis-result>

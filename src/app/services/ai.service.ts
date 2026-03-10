@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AiService {
 
-  private apiKey = "AIzaSyCkS4N9ZI-0L0waw8xNhqY9tvare2M_y4s";
+  private apiKey = environment.geminiApiKey;
 
   constructor(private http: HttpClient) {}
 
