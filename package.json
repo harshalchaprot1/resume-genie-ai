@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "ng build --base-href https://harshalchaprot1.github.io/resume-genie-ai/ && npx angular-cli-ghpages --dir=dist/resume-genie-ai/browser"
   },
   "private": true,
   "dependencies": {
