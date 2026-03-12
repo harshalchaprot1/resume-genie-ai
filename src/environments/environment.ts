@@ -3,6 +3,8 @@
 export const environment = {
   production: false,
   geminiApiKey: ''
+  // geminiApiKey: 'AIzaSyCZP5NmTYTJNv9Wv1mHgtXEfIZN6IZ49cs'
+
 
 
 };
