@@ -7,29 +7,20 @@
     Analysis Results
   </h2>
 
-  <!-- Score + Summary -->
-  <mat-card class="score-card" appearance="outlined">
+  <!-- Summary -->
+  <mat-card class="summary-card" appearance="outlined">
     <mat-card-content>
-      <div class="score-layout">
-        <div class="score-ring" [ngClass]="scoreClass">
-          <span class="score-value">{{ result.matchScore }}</span>
-          <span class="score-of">/100</span>
-        </div>
-        <div class="score-detail">
-          <span class="score-badge" [ngClass]="scoreClass + '-bg'">{{ scoreLabel }}</span>
-          <p class="score-summary">{{ result.summary }}</p>
-        </div>
-      </div>
+      <p class="summary-text">{{ result.summary }}</p>
     </mat-card-content>
   </mat-card>
 
-  <!-- Strengths & Gaps side by side -->
+  <!-- Strengths & Improvements side by side -->
   <div class="two-col">
 
     <mat-card appearance="outlined" class="section-card">
       <div class="section-head strengths-head">
         <mat-icon>verified</mat-icon>
-        <span>Strengths</span>
+        <span>Strong Points</span>
       </div>
       <mat-card-content>
         <div class="item-row" *ngFor="let s of result.strengths">
@@ -40,14 +31,14 @@
     </mat-card>
 
     <mat-card appearance="outlined" class="section-card">
-      <div class="section-head gaps-head">
+      <div class="section-head improvements-head">
         <mat-icon>report_problem</mat-icon>
-        <span>Gaps</span>
+        <span>Areas for Improvement</span>
       </div>
       <mat-card-content>
-        <div class="item-row" *ngFor="let g of result.gaps">
-          <mat-icon class="item-icon gaps-c">warning_amber</mat-icon>
-          <span>{{ g }}</span>
+        <div class="item-row" *ngFor="let item of result.improvements">
+          <mat-icon class="item-icon improvements-c">warning_amber</mat-icon>
+          <span>{{ item }}</span>
         </div>
       </mat-card-content>
     </mat-card>

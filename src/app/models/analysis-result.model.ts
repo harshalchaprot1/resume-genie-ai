@@ -1,7 +1,6 @@
 export interface AnalysisResult {
-  matchScore: number;
   summary: string;
   strengths: string[];
-  gaps: string[];
+  improvements: string[];
   suggestions: string[];
 }

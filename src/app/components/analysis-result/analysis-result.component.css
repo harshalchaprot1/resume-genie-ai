@@ -17,60 +17,18 @@
   margin: 0 0 20px;
 }
 
-/* ========== Score Card ========== */
-.score-card {
+/* ========== Summary Card ========== */
+.summary-card {
   margin-bottom: 24px;
   border-radius: 12px !important;
 }
 
-.score-layout {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  padding: 12px 0;
-}
-
-.score-ring {
-  width: 100px;
-  height: 100px;
-  min-width: 100px;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.score-ring.high   { background: #e8f5e9; border: 5px solid #43a047; color: #2e7d32; }
-.score-ring.medium  { background: #fff8e1; border: 5px solid #ffb300; color: #f57f17; }
-.score-ring.low     { background: #ffebee; border: 5px solid #e53935; color: #c62828; }
-
-.score-value { font-size: 2.2rem; line-height: 1; }
-.score-of    { font-size: 0.75rem; opacity: 0.6; }
-
-.score-detail { flex: 1; }
-
-.score-badge {
-  display: inline-block;
-  padding: 4px 14px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  margin-bottom: 10px;
-}
-
-.high-bg   { background: #c8e6c9; color: #1b5e20; }
-.medium-bg { background: #fff3e0; color: #e65100; }
-.low-bg    { background: #ffcdd2; color: #b71c1c; }
-
-.score-summary {
+.summary-text {
   margin: 0;
   color: #546e7a;
   line-height: 1.6;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
+  padding: 4px 0;
 }
 
 /* ========== Two Column ========== */
@@ -83,7 +41,6 @@
 
 @media (max-width: 700px) {
   .two-col { grid-template-columns: 1fr; }
-  .score-layout { flex-direction: column; text-align: center; }
 }
 
 /* ========== Section Cards ========== */
@@ -102,9 +59,9 @@
   font-size: 0.95rem;
 }
 
-.strengths-head { background: #e8f5e9; color: #2e7d32; }
-.gaps-head       { background: #fff8e1; color: #e65100; }
-.suggestions-head { background: #e3f2fd; color: #1565c0; }
+.strengths-head    { background: #e8f5e9; color: #2e7d32; }
+.improvements-head { background: #fff8e1; color: #e65100; }
+.suggestions-head  { background: #e3f2fd; color: #1565c0; }
 
 /* ========== List Items ========== */
 .item-row {
@@ -130,8 +87,8 @@
   flex-shrink: 0;
 }
 
-.strengths-c { color: #43a047; }
-.gaps-c      { color: #f9a825; }
+.strengths-c    { color: #43a047; }
+.improvements-c { color: #f9a825; }
 
 .tip-num {
   width: 22px;

@@ -41,17 +41,37 @@ export class ResumeUploadComponent {
   errorMessage: string = '';
   isDragOver: boolean = false;
 
+  private readonly ACCEPTED_TYPES = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'text/plain'
+  ];
+
+  get fileIcon(): string {
+    if (!this.selectedFile) return 'insert_drive_file';
+    if (this.selectedFile.type === 'application/pdf') return 'picture_as_pdf';
+    if (this.selectedFile.type === 'text/plain') return 'description';
+    return 'article'; // doc/docx
+  }
+
   constructor(
     private geminiService: GeminiService,
     private snackBar: MatSnackBar
   ) {}
 
+  private isValidFile(file: File): boolean {
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    return this.ACCEPTED_TYPES.includes(file.type) ||
+      ['pdf','doc','docx','txt'].includes(ext ?? '');
+  }
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
-    if (file && file.type === 'application/pdf') {
+    if (file && this.isValidFile(file)) {
       this.selectedFile = file;
     } else if (file) {
-      this.snackBar.open('Please select a PDF file.', 'OK', { duration: 3000 });
+      this.snackBar.open('Unsupported file. Use PDF, DOC, DOCX or TXT.', 'OK', { duration: 3000 });
     }
   }
 
@@ -68,7 +88,7 @@ export class ResumeUploadComponent {
     event.preventDefault();
     this.isDragOver = false;
     const file = event.dataTransfer?.files[0];
-    if (file && file.type === 'application/pdf') {
+    if (file && this.isValidFile(file)) {
       this.selectedFile = file;
     } else {
       this.snackBar.open('Please drop a PDF file.', 'OK', { duration: 3000 });
@@ -89,39 +109,47 @@ export class ResumeUploadComponent {
       return;
     }
 
-    const fileReader = new FileReader();
+    const fileType = this.selectedFile.type;
+    const fileExt = this.selectedFile.name.split('.').pop()?.toLowerCase();
 
-    fileReader.onload = async () => {
-      const typedArray = new Uint8Array(fileReader.result as ArrayBuffer);
-      const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
-
-      let extractedText = '';
-      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const content = await page.getTextContent();
-        const strings = content.items.map((item: any) => item.str);
-        extractedText += strings.join(' ');
-      }
-
-      this.resumeText = extractedText;
-      this.isAnalyzing = true;
-      this.errorMessage = '';
-      this.analysisResult = null;
-
-      this.geminiService.analyzeResume(this.resumeText, this.jobDescription).subscribe({
-        next: (result) => {
-          this.analysisResult = result;
-          this.isAnalyzing = false;
-          this.snackBar.open('Analysis complete!', 'OK', { duration: 3000 });
-        },
-        error: (err) => {
-          this.errorMessage = 'Failed to analyze resume. Please check your API key and try again.';
-          this.isAnalyzing = false;
-          console.error(err);
+    if (fileType === 'application/pdf' || fileExt === 'pdf') {
+      const fileReader = new FileReader();
+      fileReader.onload = async () => {
+        try {
+          const typedArray = new Uint8Array(fileReader.result as ArrayBuffer);
+          const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
+          let extractedText = '';
+          for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            const page = await pdf.getPage(pageNum);
+            const content = await page.getTextContent();
+            extractedText += content.items.map((item: any) => item.str).join(' ');
+          }
+          this.runAnalysis(extractedText);
+        } catch {
+          this.errorMessage = 'Failed to read PDF. Try a different file.';
         }
-      });
-    };
+      };
+      fileReader.readAsArrayBuffer(this.selectedFile);
+    }
+  }
 
-    fileReader.readAsArrayBuffer(this.selectedFile);
+  private runAnalysis(text: string) {
+    this.resumeText = text;
+    this.isAnalyzing = true;
+    this.errorMessage = '';
+    this.analysisResult = null;
+
+    this.geminiService.analyzeResume(this.resumeText, this.jobDescription).subscribe({
+      next: (result) => {
+        this.analysisResult = result;
+        this.isAnalyzing = false;
+        this.snackBar.open('Analysis complete!', 'OK', { duration: 3000 });
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to analyze resume. Please check your API key and try again.';
+        this.isAnalyzing = false;
+        console.error(err);
+      }
+    });
   }
 }
