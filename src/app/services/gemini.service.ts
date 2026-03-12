@@ -9,10 +9,21 @@ import { environment } from '../../environments/environment';
 })
 export class GeminiService {
 
-  private readonly API_URL =
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${environment.geminiApiKey}`;
+  private readonly BASE_URL =
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+
+  private userApiKey = '';
 
   constructor(private http: HttpClient) {}
+
+  setApiKey(key: string) {
+    this.userApiKey = key;
+  }
+
+  private get apiUrl(): string {
+    const key = this.userApiKey || environment.geminiApiKey;
+    return `${this.BASE_URL}?key=${key}`;
+  }
 
   analyzeResume(resumeText: string, jobDescription: string): Observable<AnalysisResult> {
     const resume = resumeText.substring(0, 2500).trim();
@@ -57,7 +68,7 @@ Return ONLY valid JSON with no markdown and no extra text:
       }
     };
 
-    return this.http.post<any>(this.API_URL, body).pipe(
+    return this.http.post<any>(this.apiUrl, body).pipe(
       map(response => {
         let text: string = response.candidates[0].content.parts[0].text;
         text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();

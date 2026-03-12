@@ -3,6 +3,39 @@
     <mat-icon class="brand-icon">auto_awesome</mat-icon>
     <span class="brand">ResumeGenie AI</span>
   </div>
+
+  <div class="api-key-widget">
+    <span class="api-key-label">API Key</span>
+
+    <ng-container *ngIf="!isEditing">
+      <span class="api-key-display" [class.placeholder]="!savedKey">
+        {{ savedKey ? maskedKey : 'not set' }}
+      </span>
+      <button mat-icon-button class="widget-btn" (click)="startEdit()"
+        [matTooltip]="savedKey ? 'Change API key' : 'Set API key'">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="isEditing">
+      <input
+        class="api-key-input"
+        type="password"
+        [(ngModel)]="draftKey"
+        placeholder="Enter Gemini API key"
+        (keyup.enter)="saveKey()"
+        (keyup.escape)="cancelEdit()"
+        autofocus />
+      <button mat-icon-button class="widget-btn save-btn" (click)="saveKey()"
+        matTooltip="Save key">
+        <mat-icon>check</mat-icon>
+      </button>
+      <button mat-icon-button class="widget-btn" (click)="cancelEdit()"
+        matTooltip="Cancel">
+        <mat-icon>close</mat-icon>
+      </button>
+    </ng-container>
+  </div>
 </header>
 
 <main class="app-main">
